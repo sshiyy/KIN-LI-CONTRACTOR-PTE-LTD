@@ -1,11 +1,12 @@
 import "./Sidebar.css";
 import { LayoutDashboard, Users } from "lucide-react";
+import logo from "../../assets/LOGO-small.svg";
 
 function Sidebar({ currentPage, setCurrentPage }) {
   return (
     <aside className="sidebar">
       <div className="sidebar-logo">
-        <div className="logo-icon">🏗️</div>
+        <img src={logo} alt="KIN LI Logo" className="logo-icon" />
 
         <div>
           <h3>KIN LI</h3>

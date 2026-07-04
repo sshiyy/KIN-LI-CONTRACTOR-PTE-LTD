@@ -1,0 +1,148 @@
+.workers-page {
+  padding: 32px;
+}
+
+.workers-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.workers-title-row h1 {
+  margin-bottom: 6px;
+}
+
+.workers-title-row p {
+  color: #64748b;
+}
+
+.add-worker-btn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.workers-toolbar {
+  margin-top: 24px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.workers-toolbar input {
+  width: 360px;
+  height: 42px;
+
+  border: 1px solid #dbe1ea;
+  border-radius: 10px;
+
+  padding: 0 14px;
+
+  background: white;
+}
+
+.workers-card {
+  margin-top: 20px;
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  overflow-x: auto;
+}
+
+.workers-card table {
+  width: 100%;
+  min-width: 1100px;
+  border-collapse: collapse;
+}
+
+.workers-card th {
+  text-align: left;
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 12px;
+  text-transform: uppercase;
+  padding: 16px;
+  white-space: nowrap;
+}
+
+.workers-card td {
+  padding: 16px;
+  border-top: 1px solid #eef2f7;
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+.cno {
+  font-weight: 700;
+  color: #1e3a8a;
+}
+
+.worker-name {
+  font-weight: 600;
+}
+
+.view-btn {
+  border: none;
+  background: #eff6ff;
+  color: #2563eb;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.table-message {
+  padding: 24px;
+  color: #64748b;
+}
+
+.workers-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.workers-summary {
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
+.summary-card {
+  width: 220px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.summary-card span {
+  display: block;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.summary-card h2 {
+  margin-top: 10px;
+  font-size: 36px;
+  color: #1e3a8a;
+}
+
+.workers-header h1 {
+  font-size: 40px;
+  font-weight: 750;
+  color: #1e293b;
+  margin: 0;
+}
+
+.workers-header p {
+  margin-top: 8px;
+  font-size: 18px;
+  color: #64748b;
+}

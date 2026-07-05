@@ -24,6 +24,7 @@ function Workers() {
   const [loading, setLoading] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
   const [formData, setFormData] = useState(emptyForm);
+  const [noSocExpiry, setNoSocExpiry] = useState(false);
 
   async function fetchWorkers() {
     try {
@@ -64,7 +65,7 @@ function Workers() {
       finNo: formData.finNo || "-",
       wpNo: formData.wpNo || "-",
       wpExpiry: formData.wpExpiry || "-",
-      socExpiry: formData.socExpiry || "-",
+      socExpiry: noSocExpiry ? "No Expiry" : formData.socExpiry || "-",
       passportExpiry: formData.passportExpiry || "-",
       coretradeExpiry: formData.coretradeExpiry || "-",
     };
@@ -77,7 +78,12 @@ function Workers() {
     ]);
 
     setFormData(emptyForm);
+    setNoSocExpiry(false);
     setShowDialog(false);
+  }
+
+  function openDatePicker(event) {
+    event.target.showPicker?.();
   }
 
   return (
@@ -166,12 +172,12 @@ function Workers() {
             </div>
 
             <form className="worker-form" onSubmit={handleAddWorker}>
-              <div className="form-section-title">
-                Worker Information
-                </div>
+              <div className="form-section-title">Worker Information</div>
 
               <div className="form-group">
-                <label>C/NO<span className="required">*</span></label>
+                <label>
+                  C/NO<span className="required">*</span>
+                </label>
                 <input
                   name="cNo"
                   value={formData.cNo}
@@ -182,7 +188,9 @@ function Workers() {
               </div>
 
               <div className="form-group">
-                <label>Name<span className="required">*</span></label>
+                <label>
+                  Name<span className="required">*</span>
+                </label>
                 <input
                   name="name"
                   value={formData.name}
@@ -199,6 +207,7 @@ function Workers() {
                   value={formData.hpNo}
                   onChange={handleChange}
                   placeholder="e.g. 8372 6203"
+                  required
                 />
               </div>
 
@@ -209,6 +218,7 @@ function Workers() {
                   value={formData.finNo}
                   onChange={handleChange}
                   placeholder="e.g. G6549638R"
+                  required
                 />
               </div>
 
@@ -219,14 +229,13 @@ function Workers() {
                   value={formData.wpNo}
                   onChange={handleChange}
                   placeholder="e.g. 0 73392225"
+                  required
                 />
               </div>
 
               <div className="form-divider"></div>
-              
-              <div className="form-section-title">
-                Expiry Information
-                </div>
+
+              <div className="form-section-title">Expiry Information</div>
 
               <div className="form-group">
                 <label>WP Expiry</label>
@@ -235,7 +244,7 @@ function Workers() {
                   name="wpExpiry"
                   value={formData.wpExpiry}
                   onChange={handleChange}
-                  onClick={(e) => e.target.showPicker()}v
+                  onClick={openDatePicker}
                 />
               </div>
 
@@ -246,8 +255,27 @@ function Workers() {
                   name="socExpiry"
                   value={formData.socExpiry}
                   onChange={handleChange}
-                  onClick={(e) => e.target.showPicker()}
+                  onClick={openDatePicker}
+                  disabled={noSocExpiry}
                 />
+
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={noSocExpiry}
+                    onChange={(event) => {
+                      setNoSocExpiry(event.target.checked);
+
+                      if (event.target.checked) {
+                        setFormData((previousData) => ({
+                          ...previousData,
+                          socExpiry: "",
+                        }));
+                      }
+                    }}
+                  />
+                  No expiry
+                </label>
               </div>
 
               <div className="form-group">
@@ -257,7 +285,7 @@ function Workers() {
                   name="passportExpiry"
                   value={formData.passportExpiry}
                   onChange={handleChange}
-                  onClick={(e) => e.target.showPicker()}v
+                  onClick={openDatePicker}
                 />
               </div>
 
@@ -268,12 +296,12 @@ function Workers() {
                   name="coretradeExpiry"
                   value={formData.coretradeExpiry}
                   onChange={handleChange}
-                  onClick={(e) => e.target.showPicker()}
+                  onClick={openDatePicker}
                 />
               </div>
 
-             <div className="form-note">
-              Fields left blank will be displayed as <strong>"-"</strong>.
+              <div className="form-note">
+                Fields left blank will be displayed as <strong>"-"</strong>.
               </div>
 
               <div className="dialog-actions">

@@ -43,13 +43,13 @@ function App() {
 
   return (
     <div className="app">
-      <Sidebar currentPage={currentPage} setCurrentPage={setCurrentPage} />
+      <Sidebar
+  currentPage={currentPage}
+  setCurrentPage={setCurrentPage}
+  handleLogout={handleLogout}
+/>
 
       <main className="main-content">
-        <button className="logout-btn" onClick={handleLogout}>
-          Logout
-        </button>
-
         {currentPage === "dashboard" && <Dashboard />}
         {currentPage === "workers" && <Workers />}
       </main>

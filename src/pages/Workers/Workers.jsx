@@ -46,24 +46,93 @@ function Workers() {
     fetchWorkers();
   }, []);
 
-  function handleChange(event) {
-    const { name, value } = event.target;
+function formatPhoneNumber(value) {
+  const digits = value.replace(/\D/g, "").slice(0, 8);
 
-    setFormData((previousData) => ({
-      ...previousData,
-      [name]: value,
-    }));
+  if (digits.length <= 4) return digits;
+
+  return `${digits.slice(0, 4)} ${digits.slice(4)}`;
+}
+
+function formatWpNumber(value) {
+  const digits = value.replace(/\D/g, "").slice(0, 9);
+
+  if (digits.length <= 1) return digits;
+
+  return `${digits.slice(0, 1)} ${digits.slice(1)}`;
+}
+
+function formatFinNumber(value) {
+  return value
+    .replace(/[^a-zA-Z0-9]/g, "")
+    .toUpperCase()
+    .slice(0, 9);
+}
+
+function handleChange(event) {
+  const { name, value } = event.target;
+
+  let formattedValue = value;
+
+  if (name === "name") {
+  formattedValue = value.toUpperCase();
+}
+
+  if (name === "hpNo") {
+    formattedValue = formatPhoneNumber(value);
   }
 
-  async function handleAddWorker(event) {
-    event.preventDefault();
+  if (name === "cNo") {
+  formattedValue = value.toUpperCase();
+}
 
-    const newWorker = {
+  if (name === "wpNo") {
+    formattedValue = formatWpNumber(value);
+  }
+
+  if (name === "finNo") {
+    formattedValue = formatFinNumber(value);
+  }
+
+  setFormData((previousData) => ({
+    ...previousData,
+    [name]: formattedValue,
+  }));
+}
+
+  async function handleAddWorker(event) {
+  event.preventDefault();
+
+  const hpDigits = formData.hpNo.replace(/\D/g, "");
+  const wpDigits = formData.wpNo.replace(/\D/g, "");
+  const finValue = formData.finNo.replace(/[^a-zA-Z0-9]/g, "");
+
+  if (hpDigits.length !== 8) {
+    alert("HP No must be exactly 8 digits.");
+    return;
+  }
+
+  if (wpDigits.length !== 9) {
+    alert("WP No must be exactly 9 digits.");
+    return;
+  }
+
+  if (finValue.length !== 9) {
+    alert("FIN No must be exactly 9 characters.");
+    return;
+  }
+
+  const newWorker = {
       cNo: formData.cNo || "-",
       name: formData.name || "-",
-      hpNo: formData.hpNo || "-",
       finNo: formData.finNo || "-",
-      wpNo: formData.wpNo || "-",
+      hpNo: formData.hpNo
+  ? formatPhoneNumber(formData.hpNo)
+  : "-",
+
+wpNo: formData.wpNo
+  ? formatWpNumber(formData.wpNo)
+  : "-",
       wpExpiry: formData.wpExpiry || "-",
       socExpiry: noSocExpiry ? "No Expiry" : formData.socExpiry || "-",
       passportExpiry: formData.passportExpiry || "-",
@@ -190,6 +259,7 @@ function Workers() {
                 <X size={22} />
               </button>
             </div>
+
 
             <form className="worker-form" onSubmit={handleAddWorker}>
               <div className="form-section-title">Worker Information</div>

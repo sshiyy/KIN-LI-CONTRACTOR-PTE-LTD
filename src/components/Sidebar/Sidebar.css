@@ -4,6 +4,9 @@
   background: #1e3a8a;
   color: white;
   padding: 24px 18px;
+
+  display: flex;
+  flex-direction: column;
 }
 
 .sidebar-logo {
@@ -17,6 +20,7 @@
   width: 48px;
   height: 48px;
   object-fit: contain;
+  flex-shrink: 0;
 }
 
 .sidebar-logo h3 {
@@ -28,6 +32,10 @@
   margin: 3px 0 0;
   font-size: 11px;
   opacity: 0.8;
+}
+
+.sidebar-menu {
+  flex: 1;
 }
 
 .sidebar-item {
@@ -50,17 +58,50 @@
   text-align: left;
 
   cursor: pointer;
-  transition: 0.2s;
+  transition:
+  background .2s,
+  transform .15s,
+  color .2s;
+}
+
+.sidebar-item svg {
+  flex-shrink: 0;
 }
 
 .sidebar-item:hover {
   background: rgba(255, 255, 255, 0.12);
+  transform: translateX(3px);
 }
 
 .sidebar-item.active {
   background: rgba(255, 255, 255, 0.2);
 }
 
-.sidebar-item svg {
-  flex-shrink: 0;
+.sidebar-logout {
+  margin-top: auto;
+
+  justify-content: center;
+
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+
+  position: relative;
+  font-weight: 600;
+}
+
+.sidebar-logout:hover {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.sidebar-logout::before {
+  content: "";
+  position: absolute;
+  top: -18px;
+  left: 8px;
+  right: 8px;
+  height: 1px;
+  background: rgba(255,255,255,.15);
 }

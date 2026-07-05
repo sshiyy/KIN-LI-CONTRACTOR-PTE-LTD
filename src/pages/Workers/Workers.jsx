@@ -86,6 +86,26 @@ function Workers() {
     event.target.showPicker?.();
   }
 
+  const sortedWorkers = [...workers].sort((a, b) => {
+  const regex = /^KL([A-Z])\((\d+)\)$/;
+
+  const matchA = (a.cNo || "").match(regex);
+  const matchB = (b.cNo || "").match(regex);
+
+  // Fallback for unexpected formats
+  if (!matchA || !matchB) {
+    return (a.cNo || "").localeCompare(b.cNo || "");
+  }
+
+  const prefixCompare = matchA[1].localeCompare(matchB[1]);
+
+  if (prefixCompare !== 0) {
+    return prefixCompare;
+  }
+
+  return Number(matchA[2]) - Number(matchB[2]);
+});
+
   return (
     <div className="workers-page">
       <div className="workers-header">
@@ -136,7 +156,7 @@ function Workers() {
             </thead>
 
             <tbody>
-              {workers.map((worker) => (
+              {sortedWorkers.map((worker) => (
                 <tr key={worker.id}>
                   <td className="cno">{worker.cNo || "-"}</td>
                   <td className="worker-name">{worker.name || "-"}</td>

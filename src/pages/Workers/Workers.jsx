@@ -139,7 +139,10 @@ wpNo: formData.wpNo
       coretradeExpiry: formData.coretradeExpiry || "-",
     };
 
-    await setDoc(doc(db, "workers", newWorker.cNo), newWorker);
+    await setDoc(
+  doc(db, "workers", newWorker.cNo !== "-" ? newWorker.cNo : newWorker.finNo),
+  newWorker
+);
 
     setWorkers((previousWorkers) => [
       ...previousWorkers,
@@ -156,23 +159,34 @@ wpNo: formData.wpNo
   }
 
   const sortedWorkers = [...workers].sort((a, b) => {
-  const regex = /^KL([A-Z])\((\d+)\)$/;
+  const regex = /^KL([A-Z])\((\d+)([A-Z]?)\)$/;
 
-  const matchA = (a.cNo || "").match(regex);
-  const matchB = (b.cNo || "").match(regex);
+  const cNoA = (a.cNo || "").toUpperCase();
+  const cNoB = (b.cNo || "").toUpperCase();
 
-  // Fallback for unexpected formats
-  if (!matchA || !matchB) {
-    return (a.cNo || "").localeCompare(b.cNo || "");
+  const matchA = cNoA.match(regex);
+  const matchB = cNoB.match(regex);
+
+  // Both are valid KL company numbers
+  if (matchA && matchB) {
+    // Sort by company letter (C, I, M...)
+    const companyCompare = matchA[1].localeCompare(matchB[1]);
+    if (companyCompare !== 0) return companyCompare;
+
+    // Sort by number
+    const numberCompare = Number(matchA[2]) - Number(matchB[2]);
+    if (numberCompare !== 0) return numberCompare;
+
+    // Sort by suffix ("" < A < B < C...)
+    return matchA[3].localeCompare(matchB[3]);
   }
 
-  const prefixCompare = matchA[1].localeCompare(matchB[1]);
+  // KL company numbers always come first
+  if (matchA && !matchB) return -1;
+  if (!matchA && matchB) return 1;
 
-  if (prefixCompare !== 0) {
-    return prefixCompare;
-  }
-
-  return Number(matchA[2]) - Number(matchB[2]);
+  // Neither has KL company number -> sort by name
+  return (a.name || "").localeCompare(b.name || "");
 });
 
   return (
@@ -266,14 +280,13 @@ wpNo: formData.wpNo
 
               <div className="form-group">
                 <label>
-                  C/NO<span className="required">*</span>
+                  C/NO
                 </label>
                 <input
                   name="cNo"
                   value={formData.cNo}
                   onChange={handleChange}
                   placeholder="e.g. KLC(3)"
-                  required
                 />
               </div>
 

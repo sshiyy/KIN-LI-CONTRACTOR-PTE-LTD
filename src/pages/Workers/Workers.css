@@ -68,7 +68,7 @@
   font-weight: 600;
 }
 
-.view-btn {
+.edit-btn {
   border: none;
   background: #eff6ff;
   color: #2563eb;
@@ -76,6 +76,10 @@
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
+}
+
+.edit-btn:hover {
+  background: #dbeafe;
 }
 
 .table-message {

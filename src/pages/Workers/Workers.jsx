@@ -25,6 +25,7 @@ function Workers() {
   const [showDialog, setShowDialog] = useState(false);
   const [formData, setFormData] = useState(emptyForm);
   const [noSocExpiry, setNoSocExpiry] = useState(false);
+  const [editingWorker, setEditingWorker] = useState(null);
 
   async function fetchWorkers() {
     try {
@@ -100,7 +101,7 @@ function handleChange(event) {
   }));
 }
 
-  async function handleAddWorker(event) {
+  async function handleSaveWorker(event) {
   event.preventDefault();
 
   const hpDigits = formData.hpNo.replace(/\D/g, "");
@@ -122,37 +123,81 @@ function handleChange(event) {
     return;
   }
 
-  const newWorker = {
-      cNo: formData.cNo || "-",
-      name: formData.name || "-",
-      finNo: formData.finNo || "-",
-      hpNo: formData.hpNo
-  ? formatPhoneNumber(formData.hpNo)
-  : "-",
+  const savedWorker = {
+    cNo: formData.cNo || "-",
+    name: formData.name || "-",
+    finNo: formData.finNo || "-",
+    hpNo: formData.hpNo ? formatPhoneNumber(formData.hpNo) : "-",
+    wpNo: formData.wpNo ? formatWpNumber(formData.wpNo) : "-",
+    wpExpiry: formData.wpExpiry || "-",
+    socExpiry: noSocExpiry ? "No Expiry" : formData.socExpiry || "-",
+    passportExpiry: formData.passportExpiry || "-",
+    coretradeExpiry: formData.coretradeExpiry || "-",
+  };
 
-wpNo: formData.wpNo
-  ? formatWpNumber(formData.wpNo)
-  : "-",
-      wpExpiry: formData.wpExpiry || "-",
-      socExpiry: noSocExpiry ? "No Expiry" : formData.socExpiry || "-",
-      passportExpiry: formData.passportExpiry || "-",
-      coretradeExpiry: formData.coretradeExpiry || "-",
-    };
+  const workerDocId = editingWorker
+    ? editingWorker.id
+    : savedWorker.cNo !== "-"
+      ? savedWorker.cNo
+      : savedWorker.finNo;
 
-    await setDoc(
-  doc(db, "workers", newWorker.cNo !== "-" ? newWorker.cNo : newWorker.finNo),
-  newWorker
-);
+  await setDoc(doc(db, "workers", workerDocId), savedWorker);
 
+  if (editingWorker) {
+    setWorkers((previousWorkers) =>
+      previousWorkers.map((worker) =>
+        worker.id === editingWorker.id
+          ? { id: workerDocId, ...savedWorker }
+          : worker
+      )
+    );
+  } else {
     setWorkers((previousWorkers) => [
       ...previousWorkers,
-      { id: newWorker.cNo, ...newWorker },
+      { id: workerDocId, ...savedWorker },
     ]);
-
-    setFormData(emptyForm);
-    setNoSocExpiry(false);
-    setShowDialog(false);
   }
+
+  closeDialog();
+}
+
+  function openAddDialog() {
+  setEditingWorker(null);
+  setFormData(emptyForm);
+  setNoSocExpiry(false);
+  setShowDialog(true);
+}
+
+function openEditDialog(worker) {
+  setEditingWorker(worker);
+
+  setFormData({
+    cNo: worker.cNo === "-" ? "" : worker.cNo || "",
+    name: worker.name === "-" ? "" : worker.name || "",
+    hpNo: worker.hpNo === "-" ? "" : worker.hpNo || "",
+    finNo: worker.finNo === "-" ? "" : worker.finNo || "",
+    wpNo: worker.wpNo === "-" ? "" : worker.wpNo || "",
+    wpExpiry: worker.wpExpiry === "-" ? "" : worker.wpExpiry || "",
+    socExpiry:
+      worker.socExpiry === "-" || worker.socExpiry === "No Expiry"
+        ? ""
+        : worker.socExpiry || "",
+    passportExpiry:
+      worker.passportExpiry === "-" ? "" : worker.passportExpiry || "",
+    coretradeExpiry:
+      worker.coretradeExpiry === "-" ? "" : worker.coretradeExpiry || "",
+  });
+
+  setNoSocExpiry(worker.socExpiry === "No Expiry");
+  setShowDialog(true);
+}
+
+function closeDialog() {
+  setShowDialog(false);
+  setEditingWorker(null);
+  setFormData(emptyForm);
+  setNoSocExpiry(false);
+}
 
   function openDatePicker(event) {
     event.target.showPicker?.();
@@ -211,9 +256,9 @@ wpNo: formData.wpNo
           placeholder="Search by C/NO, Name, FIN or WP No..."
         />
 
-        <button className="add-worker-btn" onClick={() => setShowDialog(true)}>
-          + Add Worker
-        </button>
+        <button className="add-worker-btn" onClick={openAddDialog}>
+  + Add Worker
+</button>
       </div>
 
       <div className="workers-card">
@@ -251,7 +296,9 @@ wpNo: formData.wpNo
                   <td>{worker.finNo || "-"}</td>
                   <td>{formatDate(worker.coretradeExpiry)}</td>
                   <td>
-                    <button className="view-btn">View</button>
+                    <button className="edit-btn" onClick={() => openEditDialog(worker)}>
+  Edit
+</button>
                   </td>
                 </tr>
               ))}
@@ -264,18 +311,18 @@ wpNo: formData.wpNo
         <div className="dialog-backdrop">
           <div className="worker-dialog">
             <div className="dialog-header">
-              <h2>Add New Worker</h2>
+              <h2>{editingWorker ? "Edit Worker" : "Add New Worker"}</h2>
 
               <button
                 className="close-dialog-btn"
-                onClick={() => setShowDialog(false)}
+                onClick={closeDialog}
               >
                 <X size={22} />
               </button>
             </div>
 
 
-            <form className="worker-form" onSubmit={handleAddWorker}>
+            <form className="worker-form" onSubmit={handleSaveWorker}>
               <div className="form-section-title">Worker Information</div>
 
               <div className="form-group">
@@ -411,14 +458,14 @@ wpNo: formData.wpNo
                 <button
                   type="button"
                   className="cancel-btn"
-                  onClick={() => setShowDialog(false)}
+                  onClick={closeDialog}
                 >
                   Cancel
                 </button>
 
                 <button className="save-worker-btn" type="submit">
                   <Save size={18} />
-                  Save Worker
+                  {editingWorker ? "Update Worker" : "Save Worker"}
                 </button>
               </div>
             </form>

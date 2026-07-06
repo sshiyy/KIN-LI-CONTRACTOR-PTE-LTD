@@ -7,6 +7,7 @@ import { X, Save } from "lucide-react";
 import { db } from "../../firebase";
 import { formatDate } from "../../utils/dateUtils";
 
+
 const emptyForm = {
   cNo: "",
   name: "",
@@ -234,6 +235,177 @@ function closeDialog() {
   return (a.name || "").localeCompare(b.name || "");
 });
 
+function formatPrintDate(value) {
+  if (!value || value === "-") return "-";
+  if (value === "No Expiry") return "NO EXPIRY";
+
+  const [year, month, day] = value.split("-");
+  return `${day}.${month}.${year}`;
+}
+
+function isExpiringSoon(value, daysLimit) {
+  if (!value || value === "-" || value === "No Expiry") return false;
+
+  const expiryDate = new Date(value);
+  if (isNaN(expiryDate.getTime())) return false;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const diffDays = (expiryDate - today) / (1000 * 60 * 60 * 24);
+
+  return diffDays <= daysLimit;
+}
+
+function handlePrint() {
+  const rows = sortedWorkers
+    .map(
+      (worker, index) => `
+        <tr>
+          <td>${index + 1}</td>
+          <td>${worker.cNo || "-"}</td>
+          <td>${worker.name || "-"}</td>
+          <td>${worker.wpNo || "-"}</td>
+
+          <td class="${isExpiringSoon(worker.wpExpiry, 61) ? "expiry-danger" : ""}">
+            ${formatPrintDate(worker.wpExpiry)}
+          </td>
+
+          <td class="${isExpiringSoon(worker.socExpiry, 46) ? "expiry-danger" : ""}">
+            ${formatPrintDate(worker.socExpiry)}
+          </td>
+
+          <td class="${isExpiringSoon(worker.passportExpiry, 183) ? "expiry-danger" : ""}">
+            ${formatPrintDate(worker.passportExpiry)}
+          </td>
+
+          <td>${worker.finNo || "-"}</td>
+
+          <td class="${isExpiringSoon(worker.coretradeExpiry, 92) ? "expiry-danger" : ""}">
+            ${formatPrintDate(worker.coretradeExpiry)}
+          </td>
+        </tr>
+      `
+    )
+    .join("");
+
+  const printWindow = window.open("", "_blank");
+
+  printWindow.document.write(`
+    <html>
+      <head>
+        <title>Workers List</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+          }
+
+          .print-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 18px;
+          }
+
+          .print-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+          }
+
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+          }
+
+          th, td {
+            border: 1px solid black;
+            padding: 6px;
+            text-align: left;
+          }
+
+          th {
+            background: black;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+          }
+
+          td:first-child {
+            text-align: center;
+            width: 35px;
+          }
+
+          .expiry-danger {
+            background: #dc2626 !important;
+            color: white !important;
+            font-weight: bold;
+            text-align: center;
+          }
+
+          @media print {
+            .print-actions {
+              display: none;
+            }
+
+            th {
+              background: black !important;
+              color: white !important;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+
+            .expiry-danger {
+              background: #dc2626 !important;
+              color: white !important;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+
+            @page {
+              size: A4 landscape;
+              margin: 10mm;
+            }
+          }
+        </style>
+      </head>
+
+      <body>
+        <div class="print-actions">
+          <button class="print-btn" onclick="window.print()">🖨 Print</button>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>C/NO</th>
+              <th>NAME</th>
+              <th>WP NO</th>
+              <th>WP EXPIRY</th>
+              <th>SOC EXPIRY</th>
+              <th>PASSPORT EXPIRY</th>
+              <th>FIN NO</th>
+              <th>CORETRADE EXPIRY</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows}
+          </tbody>
+        </table>
+      </body>
+    </html>
+  `);
+
+  printWindow.document.close();
+}
+
   return (
     <div className="workers-page">
       <div className="workers-header">
@@ -306,6 +478,12 @@ function closeDialog() {
           </table>
         )}
       </div>
+
+      <div className="workers-bottom-actions">
+  <button className="print-btn" onClick={handlePrint}>
+    🖨 Print List
+  </button>
+</div>
 
       {showDialog && (
         <div className="dialog-backdrop">

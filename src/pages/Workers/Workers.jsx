@@ -28,6 +28,7 @@ function Workers() {
   const [formData, setFormData] = useState(emptyForm);
   const [noSocExpiry, setNoSocExpiry] = useState(false);
   const [editingWorker, setEditingWorker] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   async function fetchWorkers() {
     try {
@@ -234,6 +235,18 @@ function closeDialog() {
 
   // Neither has KL company number -> sort by name
   return (a.name || "").localeCompare(b.name || "");
+});
+
+const filteredWorkers = sortedWorkers.filter((worker) => {
+  const search = searchTerm.toLowerCase();
+
+  return (
+    (worker.cNo || "").toLowerCase().includes(search) ||
+    (worker.name || "").toLowerCase().includes(search) ||
+    (worker.finNo || "").toLowerCase().includes(search) ||
+    (worker.wpNo || "").toLowerCase().includes(search) ||
+    (worker.hpNo || "").toLowerCase().includes(search)
+  );
 });
 
 function formatPrintDate(value) {
@@ -521,9 +534,11 @@ function handleExportExcel() {
 
       <div className="workers-toolbar">
         <input
-          type="text"
-          placeholder="Search by C/NO, Name, FIN or WP No..."
-        />
+  type="text"
+  placeholder="Search by C/NO, Name, FIN, WP No or HP No..."
+  value={searchTerm}
+  onChange={(e) => setSearchTerm(e.target.value)}
+/>
 
         <button className="add-worker-btn" onClick={openAddDialog}>
   + Add Worker
@@ -553,7 +568,7 @@ function handleExportExcel() {
             </thead>
 
             <tbody>
-              {sortedWorkers.map((worker) => (
+              {filteredWorkers.map((worker) => (
                 <tr key={worker.id}>
                   <td className="cno">{worker.cNo || "-"}</td>
                   <td className="worker-name">{worker.name || "-"}</td>

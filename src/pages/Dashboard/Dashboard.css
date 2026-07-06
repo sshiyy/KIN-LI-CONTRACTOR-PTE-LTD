@@ -16,19 +16,15 @@
 .dashboard-date {
   margin-top: 14px;
   margin-bottom: 8px;
-
   font-size: 14px;
   font-weight: 700;
-
   color: #2563eb;
-
   letter-spacing: 2px;
   text-transform: uppercase;
 }
 
 .dashboard-subtitle {
   margin: 0;
-
   font-size: 17px;
   color: #64748b;
   line-height: 1.6;
@@ -37,4 +33,277 @@
 .dashboard-divider {
   margin: 28px 0;
   border-bottom: 1px solid #e5e7eb;
+}
+
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 18px;
+}
+
+.dashboard-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.dashboard-card span {
+  font-size: 26px;
+}
+
+.dashboard-card h2 {
+  margin: 14px 0 6px;
+  font-size: 34px;
+  color: #1e3a8a;
+}
+
+.dashboard-card p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.upcoming-section {
+  margin-top: 34px;
+}
+
+.section-header h2 {
+  margin: 0;
+  font-size: 24px;
+  color: #1e293b;
+}
+
+.section-header p {
+  margin-top: 6px;
+  color: #64748b;
+}
+
+.upcoming-card {
+  margin-top: 18px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  overflow-x: auto;
+}
+
+.upcoming-card table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.upcoming-card th {
+  text-align: left;
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 12px;
+  text-transform: uppercase;
+  padding: 16px;
+}
+
+.upcoming-card td {
+  padding: 16px;
+  border-top: 1px solid #eef2f7;
+  font-size: 14px;
+}
+
+.worker-name {
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.document-pill {
+  display: inline-block;
+  background: #eff6ff;
+  color: #2563eb;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.days-badge {
+  display: inline-block;
+  padding: 7px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.days-badge.danger {
+  background: #dc2626;
+  color: white;
+}
+
+.days-badge.warning {
+  background: #f97316;
+  color: white;
+}
+
+.days-badge.upcoming {
+  background: #facc15;
+  color: #713f12;
+}
+
+.empty-message {
+  padding: 24px;
+  color: #64748b;
+}
+
+.update-expiry-btn {
+  border: none;
+  background: #eff6ff;
+  color: #2563eb;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.update-expiry-btn:hover {
+  background: #dbeafe;
+}
+
+.expiry-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  padding: 24px;
+}
+
+.expiry-dialog {
+  width: 480px;
+  background: white;
+  border-radius: 18px;
+  padding: 28px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+.expiry-dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.expiry-dialog-header h2 {
+  margin: 0;
+  color: #1e293b;
+  font-size: 24px;
+}
+
+.expiry-dialog-header p {
+  margin-top: 6px;
+  color: #64748b;
+}
+
+.expiry-dialog-header button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #334155;
+}
+
+.current-expiry-box {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+}
+
+.current-expiry-box span {
+  display: block;
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 6px;
+}
+
+.current-expiry-box strong {
+  font-size: 18px;
+  color: #1e293b;
+}
+
+.single-expiry-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.single-expiry-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.single-expiry-group label {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.single-expiry-group input {
+  height: 46px;
+  border: 1px solid #dbe1ea;
+  border-radius: 10px;
+  padding: 0 12px;
+}
+
+.dashboard-checkbox-label {
+  margin-bottom: 18px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+  background: #f8fafc;
+  border: 1px solid #dbe1ea;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+}
+
+.dashboard-checkbox-label input {
+  width: 17px;
+  height: 17px;
+  accent-color: #2563eb;
+}
+
+.expiry-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.expiry-dialog-actions button {
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.expiry-dialog-actions button:first-child {
+  background: white;
+  border: 1px solid #d1d5db;
+  color: #374151;
+}
+
+.expiry-dialog-actions button:last-child {
+  border: none;
+  background: #2563eb;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }

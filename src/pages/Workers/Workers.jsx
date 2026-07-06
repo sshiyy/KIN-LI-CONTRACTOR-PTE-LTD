@@ -6,6 +6,7 @@ import { X, Save } from "lucide-react";
 
 import { db } from "../../firebase";
 import { formatDate } from "../../utils/dateUtils";
+import * as XLSX from "xlsx-js-style";
 
 
 const emptyForm = {
@@ -406,6 +407,102 @@ function handlePrint() {
   printWindow.document.close();
 }
 
+function handleExportExcel() {
+  const headers = [
+    "No.",
+    "C/NO",
+    "NAME",
+    "WP NO",
+    "WP EXPIRY",
+    "SOC EXPIRY",
+    "PASSPORT EXPIRY",
+    "FIN NO",
+    "CORETRADE EXPIRY",
+  ];
+
+  const rows = sortedWorkers.map((worker, index) => [
+    index + 1,
+    worker.cNo || "-",
+    worker.name || "-",
+    worker.wpNo || "-",
+    formatPrintDate(worker.wpExpiry),
+    formatPrintDate(worker.socExpiry),
+    formatPrintDate(worker.passportExpiry),
+    worker.finNo || "-",
+    formatPrintDate(worker.coretradeExpiry),
+  ]);
+
+  const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+
+  const range = XLSX.utils.decode_range(worksheet["!ref"]);
+
+  for (let row = range.s.r; row <= range.e.r; row++) {
+    for (let col = range.s.c; col <= range.e.c; col++) {
+      const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
+      const cell = worksheet[cellAddress];
+      if (!cell) continue;
+
+      cell.s = {
+        border: {
+          top: { style: "thin", color: { rgb: "000000" } },
+          bottom: { style: "thin", color: { rgb: "000000" } },
+          left: { style: "thin", color: { rgb: "000000" } },
+          right: { style: "thin", color: { rgb: "000000" } },
+        },
+        alignment: {
+          horizontal: row === 0 ? "center" : "left",
+          vertical: "center",
+        },
+      };
+
+      if (row === 0) {
+        cell.s.fill = { fgColor: { rgb: "000000" } };
+        cell.s.font = { color: { rgb: "FFFFFF" }, bold: true };
+      }
+    }
+  }
+
+  sortedWorkers.forEach((worker, index) => {
+    const excelRow = index + 1;
+
+    const expiryChecks = [
+      { col: 4, value: worker.wpExpiry, days: 61 },
+      { col: 5, value: worker.socExpiry, days: 46 },
+      { col: 6, value: worker.passportExpiry, days: 183 },
+      { col: 8, value: worker.coretradeExpiry, days: 92 },
+    ];
+
+    expiryChecks.forEach(({ col, value, days }) => {
+      if (isExpiringSoon(value, days)) {
+        const cellAddress = XLSX.utils.encode_cell({ r: excelRow, c: col });
+        worksheet[cellAddress].s = {
+          ...worksheet[cellAddress].s,
+          fill: { fgColor: { rgb: "DC2626" } },
+          font: { color: { rgb: "FFFFFF" }, bold: true },
+          alignment: { horizontal: "center", vertical: "center" },
+        };
+      }
+    });
+  });
+
+  worksheet["!cols"] = [
+    { wch: 6 },
+    { wch: 12 },
+    { wch: 25 },
+    { wch: 15 },
+    { wch: 15 },
+    { wch: 15 },
+    { wch: 18 },
+    { wch: 15 },
+    { wch: 20 },
+  ];
+
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Workers");
+
+  XLSX.writeFile(workbook, "Workers List.xlsx");
+}
+
   return (
     <div className="workers-page">
       <div className="workers-header">
@@ -481,8 +578,12 @@ function handlePrint() {
 
       <div className="workers-bottom-actions">
   <button className="print-btn" onClick={handlePrint}>
-    🖨 Print List
-  </button>
+  🖨 Print List
+</button>
+
+<button className="print-btn" onClick={handleExportExcel}>
+  📄 Export Excel
+</button>
 </div>
 
       {showDialog && (

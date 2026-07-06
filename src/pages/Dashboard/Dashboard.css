@@ -2,6 +2,39 @@
   padding: 32px;
 }
 
-.dashboard-page h1 {
+.dashboard-header {
+  margin-bottom: 24px;
+}
+
+.dashboard-header h1 {
+  margin: 0;
+  font-size: 40px;
+  font-weight: 750;
+  color: #1e293b;
+}
+
+.dashboard-date {
+  margin-top: 14px;
   margin-bottom: 8px;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  color: #2563eb;
+
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.dashboard-subtitle {
+  margin: 0;
+
+  font-size: 17px;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.dashboard-divider {
+  margin: 28px 0;
+  border-bottom: 1px solid #e5e7eb;
 }

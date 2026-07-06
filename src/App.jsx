@@ -2,31 +2,46 @@ import { useEffect, useState } from "react";
 import "./App.css";
 
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { auth } from "./firebase";
+import { auth, db } from "./firebase";
 
 import Login from "./pages/Login/Login";
 import Sidebar from "./components/Sidebar/Sidebar";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Workers from "./pages/Workers/Workers";
+import { doc, getDoc } from "firebase/firestore";
 
 function App() {
   const [currentPage, setCurrentPage] = useState(() => {
-  return localStorage.getItem("currentPage") || "dashboard";
+  return sessionStorage.getItem("currentPage") || "dashboard";
 });
   const [user, setUser] = useState(null);
+  const [userProfile, setUserProfile] = useState(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      setCheckingAuth(false);
-    });
+  const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+    setUser(currentUser);
 
-    return () => unsubscribe();
-  }, []);
+    if (currentUser) {
+      try {
+        const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+
+        if (userDoc.exists()) {
+          setUserProfile(userDoc.data());
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    setCheckingAuth(false);
+  });
+
+  return () => unsubscribe();
+}, []);
 
   useEffect(() => {
-  localStorage.setItem("currentPage", currentPage);
+  sessionStorage.setItem("currentPage", currentPage);
 }, [currentPage]);
 
   async function handleLogout() {
@@ -50,7 +65,7 @@ function App() {
 />
 
       <main className="main-content">
-        {currentPage === "dashboard" && <Dashboard />}
+        {currentPage === "dashboard" && <Dashboard user={userProfile} />}
         {currentPage === "workers" && <Workers />}
       </main>
     </div>
